@@ -1,9 +1,46 @@
+import os
+import json
 import tkinter as tk
 from tkinter import ttk
 
+
+# This function is responsible for creating a separate directory for each company
+# And in that directory all company related information will be stored
+def make_directory(name):
+    try:
+        os.mkdir(name)
+        return "created"
+    except FileExistsError:
+        return "exists"
+
+
+# Function is responsible for storing invoices related to a company
+def store_info(name, email, phone, address):
+    status = make_directory(name)
+
+    # If directory is not present, a new will be created and information is saved
+    if status is "created":
+        company_info = {"name": name,
+                        "email": email,
+                        "phone": phone,
+                        "address": address}
+
+        with open(f"{name.strip()}/company_information.json", "w", encoding="utf-8") as file:
+            file.write(json.dumps(company_info))
+
+    # If directory is present
+    elif status is "exists":
+        # TODO: There are chances that directory is present but there is no information of company
+        #  (empty directory case)
+        with open(f"{name.strip()}/company_information.json", "r", encoding="utf-8") as file:
+            company_info = json.loads(file.read())
+        # print(company_info)
+    # TODO: E-mail validation
+
+
 # root is FIRST window OBJECT here
 root = tk.Tk()  
-#tk.Label(root, text="Enter Your Company Details", font="Times").grid()
+# tk.Label(root, text="Enter Your Company Details", font="Times").grid()
 root.title("Company Details")
 
 # labels
@@ -37,13 +74,16 @@ address_var = tk.StringVar() # address variable
 address_entrybox = ttk.Entry(root, width=20, textvariable= address_var)
 address_entrybox.grid(row=3,column=1)
 
+
 # next-> window button
 def next_window():
-    # getting variable values from entryboxes
+    # getting variable values from entry boxes
     company_name = name_var.get()
     company_email = email_var.get()
     company_phone = phone_var.get()
-    comapany_address = address_var.get()
+    company_address = address_var.get()
+
+    store_info(company_name, company_email, company_phone, company_address)  # Stores the information
 
 
 next_button = ttk.Button(root, text="Next", command=next_window)
