@@ -1,1 +1,1 @@
-# invoicing-application
+# Invoicing Application
